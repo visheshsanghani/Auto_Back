@@ -1,5 +1,4 @@
 import React from "react";
-import { withRouter } from 'react-router';
 
 // import ReactDOM from "react-dom";
 
@@ -43,7 +42,7 @@ class TimerComponent extends React.Component {
     super(props);
     this.state = {
       seconds: '00',
-      value: '02',
+      value: '01',
       isClicked: false
     }
 
@@ -86,8 +85,8 @@ class TimerComponent extends React.Component {
     }
 
     if (min === 0 & sec === 0) {
+      this.props.Submit();
       clearInterval(this.intervalHandle);
-      this.props.history.push('/final')
     }
 
 
@@ -118,6 +117,6 @@ class TimerComponent extends React.Component {
 };
 
 
-export default withRouter(TimerComponent);
+export default TimerComponent;
 // const rootElement = document.getElementById("root");
 // ReactDOM.render(<App />, rootElement);

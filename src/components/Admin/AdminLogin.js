@@ -2,12 +2,11 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { newLogin } from '../actions';
-import { Link } from 'react-router-dom';
+import { admin_login } from '../../actions';
 import axios from 'axios';
 import { Button, Form, Segment, Image } from 'semantic-ui-react';
 
-class CredentialsPage extends React.Component {
+class AdminLogin extends React.Component {
 
   state ={
     login : ''
@@ -20,13 +19,16 @@ class CredentialsPage extends React.Component {
   }
 
   onFormSubmit = value => {
-    axios.get('http://localhost:3002/users/check/')
-      .then(response => {
-        const arr = response.data.filter(obj => obj.Email === value.Email && obj.Password === value.Password)
-        this.props.newLogin(arr[0])
-        sessionStorage.setItem('user',JSON.stringify(arr[0]))
-        arr.length > 0 ? this.props.history.push('/test') : this.setState({ login: 'Please enter the correct Email / Password' })
-      })
+    if(value.Admin === "admin" && value.Password === "admin"){
+        sessionStorage.setItem('admin' , true);
+        this.props.admin_login();
+        this.props.history.push('/adminhome');
+    }
+    else{
+        this.setState({
+            login : 'Admin Credentials are Incorrect .'
+        })
+    }
   }
 
   changeState = () => {
@@ -36,15 +38,15 @@ class CredentialsPage extends React.Component {
   render() {
     const { handleSubmit } = this.props;
     return (
-      <div style={{ 'marginLeft': '200px', 'paddingTop': '25px', 'marginRight': '200px', "fontSize": "30px" }}>
+      <div style={{ 'marginLeft': '200px', 'paddingTop': '50px', 'marginRight': '200px', "fontSize": "30px" }}>
         <div>
-          Enter Your Details To Login
+          Enter Admin Credentials
         </div>
         <Segment inverted>
-          <Form inverted onSubmit={handleSubmit(this.onFormSubmit)} className="ui huge form" >
+          <Form inverted onSubmit={handleSubmit(this.onFormSubmit)} className="ui huge form" autoComplete = "off">
             <div>
-              <label htmlFor="Email">Email :</label>
-              <Field name="Email" component="input" onFocus = {this.changeState} type="email" required />
+              <label htmlFor="Admin">Admin :</label>
+              <Field name="Admin" component="input" onFocus = {this.changeState} type="text" required />
             </div>
             <br />
             <div>
@@ -59,9 +61,7 @@ class CredentialsPage extends React.Component {
           </Form>
           {this.state.login}
         </Segment>
-        <div>
-          If you do not have an account , <Link to = '/register'>To Register</Link>
-        </div>
+        
         <Image src="images/Perficient_logo.jpg" size='medium' className="ui centered image" style={{ "marginTop": "120px" }} />
       </div>
     )
@@ -69,8 +69,8 @@ class CredentialsPage extends React.Component {
 }
 
 const dispatchStateToProps = {
-  newLogin: newLogin
+  admin_login: admin_login
 }
 
 
-export default withRouter(connect(null, dispatchStateToProps)(reduxForm({ form: 'eventForm' })(CredentialsPage)));
+export default withRouter(connect(null, dispatchStateToProps)(reduxForm({ form: 'adminForm' })(AdminLogin)));
